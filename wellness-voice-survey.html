@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wellness Survey | April 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --surface2: #f4f2ef;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --border3: rgba(0,0,0,0.28);
+    --text: #1a1916;
+    --text2: #5a5852;
+    --text3: #9a9890;
+    --danger-bg: #fff0f0;
+    --danger-text: #c0392b;
+    --success-bg: #f0faf4;
+    --success-text: #1e7a45;
+    --accent: #1a1916;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  html { height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 580px;
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+  }
+
+  /* intro */
+  .intro { padding: 2.5rem 2rem 2rem; }
+  .intro-label { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--text3); margin-bottom: 1.25rem; }
+  .intro-title { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 300; line-height: 1.3; color: var(--text); margin-bottom: 1rem; }
+  .intro-body { font-size: 14px; line-height: 1.7; color: var(--text2); margin-bottom: 1.75rem; }
+  .intro-meta { font-size: 12px; color: var(--text3); margin-bottom: 2rem; }
+  .btn-start {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-start:hover { opacity: .82; }
+
+  /* header */
+  .s-header { padding: 1.5rem 2rem 0; }
+  .section-pill {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-bottom: 1rem;
+  }
+  .prog-track { height: 1.5px; background: var(--border); margin: 0 2rem; }
+  .prog-fill { height: 100%; background: var(--text2); border-radius: 2px; transition: width .5s ease; }
+
+  /* body */
+  .s-body { padding: 1.5rem 2rem 1rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  .q-meta { font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; }
+  .q-text { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 300; line-height: 1.45; color: var(--text); }
+  .q-sub { font-size: 12px; color: var(--text3); font-style: italic; margin-top: -.5rem; }
+
+  /* options */
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .opt {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--surface);
+    font-size: 14px; color: var(--text);
+    text-align: left; width: 100%;
+    transition: all .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .opt:hover { border-color: var(--border2); background: var(--surface2); }
+  .opt.selected { border-color: var(--border3); background: var(--surface2); }
+  .indicator {
+    width: 17px; height: 17px; flex-shrink: 0;
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .indicator.round { border-radius: 50%; }
+  .indicator.sq { border-radius: 3px; }
+  .opt.selected .indicator { background: var(--accent); border-color: var(--accent); }
+  .tick { display: none; }
+  .opt.selected .tick { display: block; }
+
+  /* other input */
+  .other-wrap { margin-top: 4px; }
+  .other-input {
+    width: 100%; padding: 9px 13px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; color: var(--text); outline: none;
+  }
+  .other-input:focus { border-color: var(--border2); }
+
+  /* scale */
+  .scale-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .scale-btn {
+    width: 44px; height: 44px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    background: var(--surface);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; color: var(--text2);
+    transition: all .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .scale-btn:hover { border-color: var(--border2); background: var(--surface2); }
+  .scale-btn.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .scale-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+  /* rank */
+  .rank-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    cursor: grab; margin-bottom: 6px;
+    font-size: 13px; color: var(--text);
+    user-select: none;
+    transition: box-shadow .15s;
+  }
+  .rank-item.dragging { opacity: .5; }
+  .rank-item.over { border-color: var(--border3); }
+  .rank-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--surface2); border: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500; color: var(--text2); flex-shrink: 0;
+  }
+  .drag-handle { color: var(--text3); font-size: 14px; margin-left: auto; }
+
+  /* voice */
+  .voice-area {
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .mic-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .mic-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 0.5px solid var(--border2);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: all .2s;
+    position: relative;
+  }
+  .mic-btn svg { width: 18px; height: 18px; color: var(--text2); }
+  .mic-btn.on { background: var(--danger-bg); border-color: transparent; }
+  .mic-btn.on svg { color: var(--danger-text); }
+  .pulse {
+    display: none;
+    position: absolute; inset: -7px;
+    border-radius: 50%;
+    border: 1px solid var(--danger-text);
+    opacity: .4;
+    animation: pulse-out 1.4s ease-out infinite;
+  }
+  .mic-btn.on .pulse { display: block; }
+  @keyframes pulse-out {
+    0% { transform: scale(1); opacity: .5; }
+    100% { transform: scale(1.65); opacity: 0; }
+  }
+  .mic-status { font-size: 13px; color: var(--text3); }
+  .mic-status.live { color: var(--danger-text); }
+  .voice-ta {
+    width: 100%; background: transparent; border: none; outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; line-height: 1.65; color: var(--text);
+    resize: none; min-height: 64px;
+  }
+  .voice-ta::placeholder { color: var(--text3); }
+  .edit-note { font-size: 11px; color: var(--text3); margin-top: 8px; text-align: right; }
+
+  /* text input */
+  .plain-input {
+    width: 100%; padding: 11px 15px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--text); outline: none;
+  }
+  .plain-input:focus { border-color: var(--border2); }
+
+  /* footer */
+  .s-footer {
+    padding: .875rem 2rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 0.5px solid var(--border);
+  }
+  .btn-skip {
+    background: none; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; color: var(--text3);
+    cursor: pointer; padding: 0;
+  }
+  .btn-skip:hover { color: var(--text2); }
+  .nav-row { display: flex; gap: 8px; }
+  .btn-back {
+    background: none;
+    border: 0.5px solid var(--border2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; color: var(--text2);
+    cursor: pointer; border-radius: var(--radius);
+    padding: 9px 20px; transition: background .15s;
+  }
+  .btn-back:hover { background: var(--surface2); }
+  .btn-next {
+    background: var(--accent); color: #fff;
+    border: none; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    padding: 9px 24px; cursor: pointer; transition: opacity .2s;
+  }
+  .btn-next:disabled { opacity: .25; cursor: default; }
+  .btn-next:not(:disabled):hover { opacity: .82; }
+
+  /* done */
+  .done-screen {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 3.5rem 2rem; text-align: center; gap: 1rem;
+  }
+  .done-ring {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--success-bg);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: .5rem;
+  }
+  .done-ring svg { width: 24px; height: 24px; color: var(--success-text); }
+  .done-title { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 300; color: var(--text); }
+  .done-sub { font-size: 14px; color: var(--text2); max-width: 340px; line-height: 1.65; }
+
+  @media (max-width: 480px) {
+    body { padding: 0; align-items: flex-start; }
+    .card { border-radius: 0; max-width: 100%; min-height: 100vh; box-shadow: none; }
+    .s-header { padding: 1.25rem 1.25rem 0; }
+    .prog-track { margin: 0 1.25rem; }
+    .s-body { padding: 1.25rem 1.25rem .75rem; }
+    .s-footer { padding: .75rem 1.25rem 1.25rem; }
+    .intro { padding: 2rem 1.25rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+
+<script>
+const SECTIONS = {
+  0:'Your health today', 1:'Your health today', 2:'Your health today',
+  3:'Your health today', 4:'Your health today', 5:'Your health today',
+  6:'What shapes your choices', 7:'What shapes your choices',
+  8:'What shapes your choices', 9:'What shapes your choices',
+  10:'What shapes your choices', 11:'What shapes your choices',
+  12:'Personalisation', 13:'Personalisation', 14:'Personalisation',
+  15:'Trust & brand', 16:'Trust & brand', 17:'Trust & brand',
+  18:'One last thing',
+  19:'About you', 20:'About you', 21:'About you', 22:'About you', 23:'About you'
+};
+
+const QS = [
+  {id:'q1',type:'radio',required:true,text:'How would you describe your relationship with health and wellness?',
+    opts:['I actively invest time and money in improving my health','I try to stay healthy but don\'t follow a structured approach','I\'m interested but haven\'t really started','It\'s not a priority for me right now']},
+  {id:'q2',type:'check',required:true,text:'What does your typical workout week look like?',sub:'Select all that apply.',
+    opts:['Strength training / weight training','Pilates / barre','CrossFit / functional training','Running / endurance sports','Yoga','Sports (tennis, swimming, cycling, etc.)','I work out but nothing structured / guided','I don\'t work out regularly'],other:true},
+  {id:'q3',type:'radio',required:true,text:'Do you currently take any supplements, vitamins, or health-related products regularly?',
+    opts:['Yes, I take supplements daily','Yes, but inconsistently','I used to, but I stopped','No, I have never taken supplements regularly']},
+  {id:'q4',type:'voice',required:false,text:'Can you list what supplements you currently take — or used to take?',
+    sub:'Brand names and specific products are most useful. Skip if not applicable.',
+    placeholder:'Speak or type — e.g. Thorne B-Complex, Magnesium Glycinate, AG1...'},
+  {id:'q5',type:'check',required:false,text:'Where do you currently buy your supplements?',sub:'Select all that apply.',
+    opts:['Amazon India','International websites (iHerb, Bioniq, Thorne, etc.)','Local pharmacy or health store','Brand\'s own website','Quick commerce (Zepto, Blinkit, Swiggy Instamart)','Someone else buys them for me','I bring them back from trips abroad','N/A — I don\'t buy supplements'],other:true},
+  {id:'q6',type:'radio',required:true,text:'Roughly how much do you spend on supplements and wellness products per month?',
+    opts:['Less than ₹2,000','₹2,000 to 5,000','₹5,000 to 10,000','₹10,000 to 20,000','More than ₹20,000','I don\'t track this / not sure','I don\'t buy supplements']},
+  {id:'q7',type:'check',required:true,text:'Who or what influences your wellness and supplement choices the most?',
+    opts:['Podcasts (Huberman Lab, Peter Attia, Rhonda Patrick, etc.)','Indian social media accounts / wellness influencers','Foreign social media accounts / wellness influencers','Friends or family who are into wellness','My doctor, nutritionist, or health practitioner','Longevity and biohacking content (Bryan Johnson, Dave Asprey, etc.)','My gym trainer or fitness coach','I mostly research on my own (Google, Reddit, articles)','I don\'t consume wellness content']},
+  {id:'q8',type:'radio',required:true,text:'Have you ever had a blood test specifically to understand your nutritional deficiencies or health markers — not a routine medical checkup?',
+    opts:['Yes, I do this regularly (once a year or more)','Yes, I have done it once or twice','No, but I have been meaning to','No, and I haven\'t thought about it']},
+  {id:'q9',type:'radio',required:true,text:'Have you ever visited a wellness clinic or longevity centre — in India or abroad?',
+    opts:['Yes, abroad (Dubai, London, US, etc.)','Yes, in India','No, but I would be interested','No, and I\'m not particularly interested']},
+  {id:'q9a',type:'voice',required:false,text:'Which clinic or facility did you visit?',
+    sub:'Skip if not applicable.',placeholder:'Speak or type — e.g. SHA Wellness, Viome, Lanserhof...'},
+  {id:'q10',type:'radio',required:false,text:'What is the single most frustrating thing about managing your health and supplementation right now?',
+    opts:['I don\'t know if what I\'m taking actually works','There are too many options and too much conflicting information','I can\'t find the quality of products I want in India','I forget to take things consistently or my routine keeps changing','I don\'t have someone I trust to guide my choices','It\'s not frustrating — I\'m happy with my current setup']},
+  {id:'q11',type:'scale',required:false,text:'How confident are you that the supplements you currently take are the right ones for your body?',
+    min:'Not confident at all',max:'Extremely confident',n:5},
+  {id:'q12',type:'radio',required:true,text:'How likely are you to trust a personalised supplement formulation made specifically for you — based on a quiz, health assessment, or blood test?',
+    opts:['Very likely','Unsure','Unlikely']},
+  {id:'q14',type:'rank',required:true,text:'If a premium wellness space offered the following, which would you be most interested in? Rank in order of interest.',
+    sub:'Drag to reorder — 1 = most interested, 4 = least interested.',
+    items:['A personalised supplement formula made just for me, based on a quiz or blood test','Formulated beverages for my specific supplementing needs','A curated selection of the best global wellness products, vetted and explained','Access to wellness practitioners who can advise on my specific protocol']},
+  {id:'q15',type:'radio',required:true,text:'Would you prefer to take your personalised supplements as:',
+    opts:['A single formula — one product, everything I need in one daily intake','Separate targeted products — different supplements for different needs','I don\'t have a preference']},
+  {id:'q16',type:'radio',required:true,text:'What would make you most likely to trust a new wellness brand in India?',
+    opts:['Recommendation from a friend or someone I respect','A brand backed by medical professionals','Founders or early users I recognise and respect','International quality certifications or manufacturing standards','Seeing measurable results in my own health data after using it','Intentional design and a premium in-store experience'],other:true},
+  {id:'q17',type:'radio',required:true,text:'How important is it that a wellness brand understands Indian bodies and conditions specifically — diet, climate, common deficiencies — rather than just offering an international product?',
+    opts:['Very important — my body and lifestyle are different from a Western consumer','Somewhat important — it\'s a nice-to-have but not essential','Not important — I trust international products and standards']},
+  {id:'q18',type:'radio',required:true,text:'How much would you be willing to pay per month for a personalised supplement subscription tailored to your body?',
+    opts:['Less than ₹1,000 per month','₹1,000 to 3,000 per month','₹3,000 to 5,000 per month','₹5,000 to 8,000 per month','More than ₹8,000 per month if quality and personalisation justify it','I would need to experience it before I could say']},
+  {id:'q19',type:'voice',required:true,text:'If you could wave a magic wand and fix one thing about how you manage your health and wellness today, what would it be?',
+    placeholder:'Take your time. There are no right or wrong answers.'},
+  {id:'q20',type:'radio',required:true,text:'Age range',opts:['18 to 24','25 to 30','31 to 35','36 to 40','41 to 50','51+']},
+  {id:'q21',type:'radio',required:true,text:'Gender',opts:['Male','Female','Prefer not to say']},
+  {id:'q22',type:'text',required:true,text:'City you currently live in',placeholder:'Type your city...'},
+  {id:'q23',type:'radio',required:true,text:'Which best describes your professional situation?',
+    opts:['Founder / entrepreneur','Senior executive / C-suite','Working professional (corporate or independent)','Creative / freelance / consulting','Homemaker with active personal interests','Student'],other:true},
+  {id:'q24',type:'radio',required:true,text:'Have you travelled internationally in the past 12 months?',
+    opts:['Yes, more than 3 times','Yes, 1 to 3 times','No, but I plan to','No']}
+];
+
+let started = false;
+let cur = 0;
+let answers = {};
+let rankOrders = {};
+let voiceText = {};
+let micActive = false;
+let recognition = null;
+
+const card = document.getElementById('card');
+
+function getSpeech() {
+  const S = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!S) return null;
+  const r = new S(); r.continuous = true; r.interimResults = true; r.lang = 'en-IN'; return r;
+}
+
+function isAnswered(i) {
+  const q = QS[i];
+  if (!q.required) return true;
+  if (q.type === 'radio') return !!answers[q.id];
+  if (q.type === 'check') return (answers[q.id] || []).length > 0;
+  if (q.type === 'scale') return answers[q.id] !== undefined;
+  if (q.type === 'rank') return true;
+  if (q.type === 'voice') return (voiceText[q.id] || '').trim().length > 0;
+  if (q.type === 'text') return (answers[q.id] || '').trim().length > 0;
+  return false;
+}
+
+function stopMic() {
+  if (recognition) { recognition.stop(); recognition = null; }
+  micActive = false;
+}
+
+function renderIntro() {
+  card.innerHTML = `
+    <div class="intro">
+      <p class="intro-label">Wellness Survey · April 2026</p>
+      <h1 class="intro-title">How do health&#8209;conscious Indians really approach wellness?</h1>
+      <p class="intro-body">This is a short independent research survey exploring how health-conscious consumers in India approach wellness. The goal is to understand real behaviours and honest opinions — not to promote any product or service. Your responses are confidential and will be used purely for research purposes.</p>
+      <p class="intro-meta">⏱ Takes approximately 7 to 8 minutes &nbsp;·&nbsp; 24 questions &nbsp;·&nbsp; Voice-enabled</p>
+      <button class="btn-start" onclick="startSurvey()">Begin survey →</button>
+    </div>`;
+}
+
+function startSurvey() { started = true; render(); }
+
+function render() {
+  stopMic();
+  if (cur >= QS.length) { renderDone(); return; }
+  const q = QS[cur];
+  const pct = Math.round((cur / QS.length) * 100);
+  const section = SECTIONS[cur] || '';
+  const qnum = cur + 1;
+  const total = QS.length;
+  const canNext = isAnswered(cur);
+
+  let bodyHTML = '';
+
+  if (q.type === 'radio') {
+    bodyHTML = `<div class="options">${q.opts.map(o => `
+      <button class="opt${answers[q.id] === o ? ' selected' : ''}" onclick="selRadio('${q.id}',this)">
+        <span class="indicator round">
+          <svg class="tick" width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="2"><polyline points="1,4.5 3.5,7 8,2"/></svg>
+        </span>
+        <span>${o}</span>
+      </button>`).join('')}
+      ${q.other ? `<div class="other-wrap"><input class="other-input" placeholder="Other: type here..." value="${answers[q.id + '_other'] || ''}" oninput="answers['${q.id}_other']=this.value"/></div>` : ''}
+    </div>`;
+  } else if (q.type === 'check') {
+    const sel = answers[q.id] || [];
+    bodyHTML = `<div class="options">${q.opts.map(o => `
+      <button class="opt${sel.includes(o) ? ' selected' : ''}" onclick="togCheck('${q.id}',this)">
+        <span class="indicator sq">
+          <svg class="tick" width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="2"><polyline points="1,4.5 3.5,7 8,2"/></svg>
+        </span>
+        <span>${o}</span>
+      </button>`).join('')}
+      ${q.other ? `<div class="other-wrap"><input class="other-input" placeholder="Other: type here..." value="${answers[q.id + '_other'] || ''}" oninput="answers['${q.id}_other']=this.value"/></div>` : ''}
+    </div>`;
+  } else if (q.type === 'scale') {
+    const v = answers[q.id];
+    bodyHTML = `<div>
+      <div class="scale-row">${Array.from({length: q.n}, (_, i) => i + 1).map(n => `
+        <button class="scale-btn${v === n ? ' selected' : ''}" onclick="selScale('${q.id}',${n})">${n}</button>`).join('')}
+      </div>
+      <div class="scale-labels"><span>${q.min}</span><span>${q.max}</span></div>
+    </div>`;
+  } else if (q.type === 'rank') {
+    if (!rankOrders[q.id]) rankOrders[q.id] = [...q.items];
+    const items = rankOrders[q.id];
+    bodyHTML = `<div id="rank-${q.id}">${items.map((it, i) => `
+      <div class="rank-item" draggable="true" data-qid="${q.id}" data-idx="${i}"
+        ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)">
+        <span class="rank-num">${i + 1}</span>
+        <span>${it}</span>
+        <span class="drag-handle">⠿</span>
+      </div>`).join('')}</div>`;
+  } else if (q.type === 'voice') {
+    const txt = voiceText[q.id] || '';
+    bodyHTML = `<div class="voice-area">
+      <div class="mic-row">
+        <button class="mic-btn" id="mic-${q.id}" onclick="toggleMic('${q.id}')">
+          <div class="pulse"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0M12 19v3M9 22h6"/>
+          </svg>
+        </button>
+        <span class="mic-status" id="mic-status-${q.id}">tap to speak</span>
+      </div>
+      <textarea class="voice-ta" id="vta-${q.id}" rows="3"
+        placeholder="${q.placeholder || 'Speak or type your answer...'}"
+        oninput="voiceText['${q.id}']=this.value;refreshNext()">${txt}</textarea>
+      ${txt ? '<div class="edit-note">you can edit this</div>' : ''}
+    </div>`;
+  } else if (q.type === 'text') {
+    bodyHTML = `<input class="plain-input" value="${answers[q.id] || ''}"
+      placeholder="${q.placeholder || ''}"
+      oninput="answers['${q.id}']=this.value;refreshNext()"/>`;
+  }
+
+  card.innerHTML = `
+    <div class="s-header">
+      <span class="section-pill">${section}</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="s-body">
+      <p class="q-meta">Question ${qnum} of ${total}</p>
+      <p class="q-text">${q.text}</p>
+      ${q.sub ? `<p class="q-sub">${q.sub}</p>` : ''}
+      ${bodyHTML}
+    </div>
+    <div class="s-footer">
+      <button class="btn-skip" onclick="skip()">${q.required ? '' : 'skip'}</button>
+      <div class="nav-row">
+        ${cur > 0 ? `<button class="btn-back" onclick="back()">← back</button>` : ''}
+        <button class="btn-next" id="next-btn" ${canNext ? '' : 'disabled'} onclick="next()">
+          ${cur === QS.length - 1 ? 'submit' : 'next →'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderDone() {
+  card.innerHTML = `
+    <div class="done-screen">
+      <div class="done-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <p class="done-title">Thank you.</p>
+      <p class="done-sub">Your responses have been recorded. This kind of honest, detailed input is exactly what good research needs.</p>
+    </div>`;
+}
+
+function refreshNext() {
+  const btn = document.getElementById('next-btn');
+  if (btn) btn.disabled = !isAnswered(cur);
+}
+
+function selRadio(id, btn) {
+  const val = btn.querySelector('span:last-child').textContent;
+  answers[id] = val;
+  render();
+}
+
+function togCheck(id, btn) {
+  const val = btn.querySelector('span:last-child').textContent;
+  if (!answers[id]) answers[id] = [];
+  const idx = answers[id].indexOf(val);
+  if (idx > -1) answers[id].splice(idx, 1); else answers[id].push(val);
+  render();
+}
+
+function selScale(id, val) {
+  answers[id] = val; render();
+}
+
+let dragIdx = null, dragQid = null;
+function dragStart(e) {
+  dragIdx = parseInt(e.currentTarget.dataset.idx);
+  dragQid = e.currentTarget.dataset.qid;
+  e.currentTarget.classList.add('dragging');
+}
+function dragOver(e) { e.preventDefault(); }
+function drop(e) {
+  e.preventDefault();
+  const target = e.target.closest('.rank-item');
+  if (!target || !dragQid) return;
+  const toIdx = parseInt(target.dataset.idx);
+  if (dragIdx === null || dragIdx === toIdx) return;
+  const arr = rankOrders[dragQid];
+  const moved = arr.splice(dragIdx, 1)[0];
+  arr.splice(toIdx, 0, moved);
+  dragIdx = null; dragQid = null;
+  render();
+}
+
+function toggleMic(qid) {
+  if (micActive) { stopMic(); render(); return; }
+  const SR = getSpeech();
+  if (!SR) {
+    const s = document.getElementById('mic-status-' + qid);
+    if (s) s.textContent = 'mic not supported — type below';
+    return;
+  }
+  micActive = true;
+  const btn = document.getElementById('mic-' + qid);
+  const status = document.getElementById('mic-status-' + qid);
+  const ta = document.getElementById('vta-' + qid);
+  if (btn) btn.classList.add('on');
+  if (status) { status.textContent = 'listening...'; status.classList.add('live'); }
+  const base = voiceText[qid] || '';
+  recognition = SR;
+  SR.onresult = e => {
+    let fin = base, interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) { fin += (fin ? ' ' : '') + e.results[i][0].transcript; voiceText[qid] = fin; }
+      else interim = e.results[i][0].transcript;
+    }
+    if (ta) ta.value = fin + (interim ? ' ' + interim : '');
+    refreshNext();
+  };
+  SR.onerror = () => { stopMic(); render(); };
+  SR.onend = () => { if (micActive) SR.start(); };
+  SR.start();
+}
+
+function next() {
+  const q = QS[cur];
+  if (q.type === 'rank' && !rankOrders[q.id]) rankOrders[q.id] = [...q.items];
+  cur++; render();
+}
+function back() { if (cur > 0) { cur--; render(); } }
+function skip() { if (!QS[cur].required) { cur++; render(); } }
+
+renderIntro();
+</script>
+</body>
+</html>
